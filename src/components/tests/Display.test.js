@@ -1,6 +1,50 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Display from './../Display';
+import userEvent from '@testing-library/user-event';
 
+const testShow = {
+    //add in appropriate test data structure here.
+    name: '',
+    summary: '',
+    seasons: [
+        {
+            id: 1,
+            name: 'Season 1',
+            episodes: [ "Episode 1", "Episode 2"]
+        },
+        {
+            id: 2,
+            name: 'Season 2',
+            episodes: []
+        }
+    ],
+}
 
+test("renders without error", () => {
+    render(<Display />);
+});
 
+test("show component displays when fetch button is pressed", async () => {
+    const mockGetData = jest.fn();
+    render(<Display />)
+
+    const fetch = screen.findByText(/Press to Get Show Data/i);
+    const show = screen.findByTestId(/show-container/i);
+
+    userEvent.click(fetch);
+
+    expect(mockGetData).toHaveBeenCalled();
+    await expect(show).toBeInTheDocument();
+})
+
+test("select options equal those in data on fetch", () => {
+
+});
+
+test("displayFunc is called on fetch", () => {
+
+});
 
 
 
