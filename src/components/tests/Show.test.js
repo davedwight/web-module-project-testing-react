@@ -5,22 +5,73 @@ import userEvent from '@testing-library/user-event';
 import Show from './../Show';
 
 const testShow = {
-    //add in approprate test data structure here.
+    //add in appropriate test data structure here.
+    name: '',
+    summary: '',
+    seasons: [
+        {
+            id: 1,
+            name: 'Season 1',
+            episodes: [ "Episode 1", "Episode 2"]
+        },
+        {
+            id: 2,
+            name: 'Season 2',
+            episodes: []
+        }
+    ],
 }
 
 test('renders testShow and no selected Season without errors', ()=>{
+    render(<Show show={testShow} selectedSeason={'none'} />)
 });
 
 test('renders Loading component when prop show is null', () => {
+    render(<Show show={null} /> )
+
+    const loading = screen.queryByTestId(/loading-container/i);
+
+    expect(loading).toBeTruthy();
+    expect(loading).toBeInTheDocument();
 });
 
 test('renders same number of options seasons are passed in', ()=>{
+    render(<Show show={testShow} selectedSeason={'none'} />)
+
+    const seasons = screen.queryAllByTestId(/season-option/i);
+
+    expect(seasons).toHaveLength(2);
 });
 
-test('handleSelect is called when an season is selected', () => {
+test('handleSelect is called when a season is selected', () => {
+    const handleSelect = jest.fn();
+
+    const { container } = render(<Show show={testShow} selectedSeason={'none'} handleSelect={handleSelect} />);
+    
+    const select = container.querySelector('select');
+    console.log('select: ', select);
+    userEvent.click(select);
+
+    const seasons = screen.queryAllByTestId(/season-option/i);
+
+    userEvent.click(seasons[0]);
+
+    expect(handleSelect).toHaveBeenCalledTimes(1);
 });
 
 test('component renders when no seasons are selected and when rerenders with a season passed in', () => {
+    const { rerender } = render(<Show show={testShow} selectedSeason={'none'} />);
+
+    let episode = screen.queryAllByText(/episode/i);
+
+    expect(episode).toHaveLength(0);
+
+    rerender(<Show show={testShow} selectedSeason={1} />);
+
+    episode = screen.queryAllByText(/episode/i);
+
+    expect(episode).toHaveLength(2);
+
 });
 
 //Tasks:
